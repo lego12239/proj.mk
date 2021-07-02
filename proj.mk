@@ -170,19 +170,33 @@ endef
 # TEMPLATES FOR GET STAGE
 ######################################################################
 define _deps_gen_get_ln
+	if [ -e $(DEPSDIR)/src/$(1) ]; then \
+		rm -rf $(DEPSDIR)/src/$(1); \
+	fi
 	ln -Ts $(word 2,$(2)) $(DEPSDIR)/src/$(1)
 endef
 
 define _deps_gen_get_cp
+	if [ -e $(DEPSDIR)/src/$(1) ]; then \
+		rm -rf $(DEPSDIR)/src/$(1); \
+	fi
 	cp -rf $(word 2,$(2)) $(DEPSDIR)/src/$(1)
 endef
 
 define _deps_gen_get_git
-	git clone $(word 2,$(2)) $(DEPSDIR)/src/$(1)
+	if [ -d $(DEPSDIR)/src/$(1)/.git ]; then \
+		cd $(DEPSDIR)/src/$(1) && git pull; \
+	elif [ -e $(DEPSDIR)/src/$(1) ]; then \
+		rm -rf $(DEPSDIR)/src/$(1); \
+		git clone $(word 2,$(2)) $(DEPSDIR)/src/$(1); \
+	fi
 	$(if $(word 3,$(2)),cd $(DEPSDIR)/src/$(1) && git checkout $(word 3,$(2)))
 endef
 
 define _deps_gen_get_wget
+	if [ -e $(DEPSDIR)/src/$(1) ]; then \
+		rm -rf $(DEPSDIR)/src/$(1); \
+	fi
 	wget -O $(DEPSDIR)/src/$(1).WK "$(word 2,$(2))"
 	$(PROJMKDIR)/dep_unpack.sh $(1)
 endef
