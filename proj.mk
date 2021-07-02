@@ -317,7 +317,7 @@ deps_show:
 
 ifneq ($(suffix $(TARGET)),.a)
 $(TARGET):: $(OBJS)
-	$(CC) -o $@ $< $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 endif
 
 clean-all:: clean clean-tests clean-deps
