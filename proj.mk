@@ -13,6 +13,7 @@ endif
 DESTDIR ?= /
 PREFIX ?= /usr/local
 D := $(DESTDIR)/$(PREFIX)
+O ?= o
 
 DEPSDIR ?= $(shell pwd)/deps/
 PROJMKDIR ?= $(shell pwd)/.proj.mk
@@ -149,6 +150,7 @@ ifneq ($(.SHELLSTATUS),0)
 $(error DEPS set failure)
 endif
 
+
 ######################################################################
 # TEMPLATES FOR include statements
 ######################################################################
@@ -259,6 +261,17 @@ $(DEPSDIR)/src/.$(1).get: $(DEPSDIR)/.deps_dirs
 
 endef
 
+######################################################################
+# TEMPLATES FOR TARGETS
+######################################################################
+define _deps_gen_targ
+ifeq ($(suffix $(TARGET)),)
+$(1):: $(if $(wordlist 2,$(words $(TARGET)),$(TARGET)),$(1).$(O)) $(OBJS)
+	$(CC) -o $$@ $$^ $$(LDFLAGS)
+endif
+endef
+
+
 build: build-pre $(TARGET) build-post
 
 build-pre::
@@ -315,10 +328,7 @@ deps_show:
 	@echo $(DEPS)
 	$(foreach dep,$(DEPS),$(call _deps_gen_show,$(dep)))
 
-ifneq ($(suffix $(TARGET)),.a)
-$(TARGET):: $(OBJS)
-	$(CC) -o $@ $^ $(LDFLAGS)
-endif
+$(foreach targ,$(TARGET),$(eval $(call _deps_gen_targ,$(targ))))
 
 clean-all:: clean clean-tests clean-deps
 	rm -f $(TARGET)
@@ -331,7 +341,7 @@ clean-tests::
 	$(MAKE) -C tests clean || true
 
 clean::
-	rm -f *~ *.o
+	rm -f *~ *.$(O)
 
 tests:
 	$(MAKE) -C tests
