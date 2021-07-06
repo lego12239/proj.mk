@@ -32,7 +32,8 @@ export PROJMKDIR
 export DEBUG
 
 .PHONY: deps deps_ deps_show deps_genfullinfo
-.PHONY: build clean clean-all clean-deps clean-tests tests
+.PHONY: build build-pre build-post
+.PHONY: clean clean-all clean-deps clean-tests tests
 
 # Reverse dependencies and remove duplicates
 define _deps_revdeps.sh
