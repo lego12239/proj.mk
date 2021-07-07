@@ -12,6 +12,8 @@ TARGET ?= $(PROJECT)
 ifeq ($(TARGET_TYPE),)
 ifeq ($(suffix $(TARGET)),.a)
 TARGET_TYPE := liba
+else ifeq ($(suffix $(TARGET)),.so)
+TARGET_TYPE := libso
 else
 TARGET_TYPE := prog
 endif
@@ -20,6 +22,7 @@ endif
 # Check target type value
 ifeq ($(TARGET_TYPE),prog)
 else ifeq ($(TARGET_TYPE),liba)
+else ifeq ($(TARGET_TYPE),libso)
 else
 $(error unknown TARGET_TYPE: $(TARGET_TYPE))
 endif
@@ -41,6 +44,12 @@ LDFLAGS += -L$(DEPSDIR)/lib
 
 ifdef DEBUG
 	CFLAGS += -g3 -ggdb -DDEBUG
+endif
+
+ifeq ($(TARGET_TYPE),libso)
+ifneq ($(filter -fpic,$(CFLAGS)),-fpic)
+CFLAGS += -fPIC
+endif
 endif
 
 export DEPSDIR
@@ -288,6 +297,9 @@ $(1):: $(if $(wordlist 2,$(words $(TARGET)),$(TARGET)),$(1).$(O)) $(OBJS)
 else ifeq ($(TARGET_TYPE),liba)
 $(1):: $(OBJS)
 	$(AR) rvs $$@ $$^
+else ifeq ($(TARGET_TYPE),libso)
+$(1):: $(OBJS)
+	$(CC) -shared -o $$@ $$^
 endif
 endef
 
