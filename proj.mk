@@ -6,9 +6,8 @@ ifeq ($(PROJECT),)
 $(error PROJECT variable is't defined)
 endif
 
-ifeq ($(TARGET),)
-TARGET := $(PROJECT)
-endif
+# Set target and target type
+TARGET ?= $(PROJECT)
 
 ifeq ($(TARGET_TYPE),)
 ifeq ($(suffix $(TARGET)),.a)
@@ -18,6 +17,7 @@ TARGET_TYPE := prog
 endif
 endif
 
+# Check target type value
 ifeq ($(TARGET_TYPE),prog)
 else ifeq ($(TARGET_TYPE),liba)
 else
