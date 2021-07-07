@@ -366,8 +366,7 @@ clean-all:: clean clean-tests clean-deps
 	rm -f $(TARGET)
 
 clean-deps::
-	rm -rf $(DEPSDIR)/lib/* $(DEPSDIR)/include/* $(DEPSDIR)/src/*
-	rm -f $(DEPSDIR)/src/.*.get $(DEPSDIR)/src/.*.build
+	rm -rf $(DEPSDIR)/
 
 clean-tests::
 	$(MAKE) -C tests clean || true
