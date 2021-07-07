@@ -10,6 +10,22 @@ ifeq ($(TARGET),)
 TARGET := $(PROJECT)
 endif
 
+ifeq ($(TARGET_TYPE),)
+ifeq ($(suffix $(TARGET)),.a)
+TARGET_TYPE := liba
+else
+TARGET_TYPE := prog
+endif
+endif
+
+ifeq ($(TARGET_TYPE),prog)
+else ifeq ($(TARGET_TYPE),liba)
+else
+$(error unknown TARGET_TYPE: $(TARGET_TYPE))
+endif
+
+$(info TARGET_TYPE is $(TARGET_TYPE))
+
 DESTDIR ?= /
 PREFIX ?= /usr/local
 D := $(DESTDIR)/$(PREFIX)
@@ -266,9 +282,12 @@ endef
 # TEMPLATES FOR TARGETS
 ######################################################################
 define _deps_gen_targ
-ifeq ($(suffix $(TARGET)),)
+ifeq ($(TARGET_TYPE),prog)
 $(1):: $(if $(wordlist 2,$(words $(TARGET)),$(TARGET)),$(1).$(O)) $(OBJS)
 	$(CC) -o $$@ $$^ $$(LDFLAGS)
+else ifeq ($(TARGET_TYPE),liba)
+$(1):: $(OBJS)
+	$(AR) rvs $$@ $$^
 endif
 endef
 
@@ -346,9 +365,6 @@ clean::
 
 tests:
 	$(MAKE) -C tests
-
-%.a: $(OBJS)
-	$(AR) rvs $@ $^
 
 %.o: %.c
 	$(CC) -c -o $@ $(CFLAGS) $<
