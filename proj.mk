@@ -29,10 +29,18 @@ endif
 
 $(info TARGET_TYPE is $(TARGET_TYPE))
 
+CCYAN := $(shell /bin/echo -e '\033[36;01m')
+CRST := $(shell /bin/echo -e '\033[00m')
+projmk_infomsg = echo "$(CCYAN)[$(1)]$(CRST)"
+
 DESTDIR ?= /
 PREFIX ?= /usr/local
 D := $(DESTDIR)/$(PREFIX)
 O ?= o
+
+ifdef DEPSDIR
+DEPS_ME_IS_DEP := 1
+endif
 
 DEPSDIR ?= $(shell pwd)/deps/
 PROJMKDIR ?= $(shell pwd)/.proj.mk
@@ -264,11 +272,13 @@ endef
 ######################################################################
 define _deps_gen_targets
 $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
+	@$(call projmk_infomsg,BUILD $(1))
 	if [ -e $(DEPSDIR)/src/$(1) ]; then \
 		$(if $(deps_build_$(1)),$(call _deps_gen_build,$(1),\
 		  $(deps_build_$(1))),$(call _deps_gen_build_detect,$(1))); \
 		$$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install; \
 	fi
+	@$(call projmk_infomsg,GENERATE info file for $(1))
 	echo USE__$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
 	if [ -e $(DEPSDIR)/src/$(1)/proj.mk ]; then \
 		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo; \
@@ -282,6 +292,7 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	fi
 
 $(DEPSDIR)/src/.$(1).get: $(DEPSDIR)/.deps_dirs
+	@$(call projmk_infomsg,OBTAIN $(1))
 	$(if $(deps_get_$(1)),$(call _deps_gen_get,$(1),$(deps_get_$(1))))
 	touch $$@
 
@@ -307,6 +318,7 @@ endef
 build: build-pre $(TARGET) build-post
 
 build-pre::
+	$(if $(DEPS_ME_IS_DEP),,@$(call projmk_infomsg,BUILD $(PROJECT)))
 
 build-post::
 
