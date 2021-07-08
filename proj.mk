@@ -43,7 +43,7 @@ DEPS_ME_IS_DEP := 1
 endif
 
 DEPSDIR ?= $(shell pwd)/deps/
-PROJMKDIR ?= $(shell pwd)/.proj.mk
+PROJMKDIR := $(shell pwd)/.proj.mk
 DEPS_VARS_RMDUPS += CFLAGS LDFLAGS
 DEPS_VARS_EXPORT += CFLAGS LDFLAGS
 
@@ -54,12 +54,6 @@ ifdef DEBUG
 	CFLAGS += -g3 -ggdb -DDEBUG
 endif
 
-ifeq ($(TARGET_TYPE),libso)
-ifneq ($(filter -fpic,$(CFLAGS)),-fpic)
-CFLAGS += -fPIC
-endif
-endif
-
 export DEPSDIR
 export PROJMKDIR
 export DEBUG
@@ -67,111 +61,6 @@ export DEBUG
 .PHONY: deps deps_ deps_show deps_genfullinfo
 .PHONY: build build-pre build-post
 .PHONY: clean clean-all clean-deps clean-tests tests
-
-# Reverse dependencies and remove duplicates
-define _deps_revdeps.sh
-#!/bin/sh
-	OUT=""
-	read DEPS
-	for DEP in $$DEPS; do
-		OUT="$$DEP $$OUT"
-	done
-	DEPS=$$OUT
-	OUT=""
-	for DEP in $$DEPS; do
-		if echo $$OUT | egrep -v "(^|[[:space:]]+)$$DEP([[:space:]]+|$$)" >/dev/null 2>&1; then
-			OUT="$$OUT $$DEP"
-		fi
-	done
-	echo $$OUT
-endef
-
-# Remove duplicates
-define _deps_rmdups.sh
-#!/bin/sh
-	OUT=""
-	read DEPS
-	for DEP in $$DEPS; do
-		if echo $$OUT | egrep -v "(^|[[:space:]]+)$$DEP([[:space:]]+|$$)" >/dev/null 2>&1; then
-			OUT="$$OUT $$DEP"
-		fi
-	done
-	echo $$OUT
-endef
-
-# Unpack dep compressed tarball
-define _dep_unpack.sh
-#!/bin/sh
-	DEP="$$1"
-	mkdir $$DEPSDIR/src/$${DEP}.tmp
-	cd $$DEPSDIR/src/$${DEP}.tmp
-	FTYPE=`file ../$${DEP}.WK | awk '{print $$2}' | tr A-Z a-z`
-	case $$FTYPE in
-	gzip)
-		gunzip -c ../$${DEP}.WK | tar -x
-		;;
-	bzip2)
-		bunzip2 -c ../$${DEP}.WK | tar -x
-		;;
-	xz)
-		unxz -c ../$${DEP}.WK | tar -x
-		;;
-	zip)
-		unzip ../$${DEP}.WK
-		;;
-	*)
-		echo "Unknown file format: $$FTYPE" >&2
-		exit 1
-		;;
-	esac
-	FCNT=`ls -1 | wc -l`
-	if [ $$FCNT -eq 1 ]; then
-		mv `ls -1` $$DEPSDIR/src/$${DEP}
-		cd ..
-		rm -rf $${DEP}.tmp
-	else
-		cd ..
-		mv $$DEPSDIR/src/$${DEP}.tmp $$DEPSDIR/src/$${DEP}
-	fi
-endef
-
-define _deps_stripslash.sh
-#!/bin/sh
-	OUT=""
-	for W in "$$@"; do
-		W=`echo "$$W" | sed -Ee 's/^\/*|\/*$$//g'`
-		if echo $$W | grep '/'; then
-			echo "There is slash in the middle: $$W" >&2
-			exit 1
-		fi
-		OUT="$$OUT $$W"
-	done
-	echo $$OUT
-endef
-
-ifeq ($(shell test -e $(PROJMKDIR) || echo f),f)
-$(shell mkdir $(PROJMKDIR))
-endif
-
-ifeq ($(shell test -e $(PROJMKDIR)/revdeps.sh || echo f),f)
-$(file >$(PROJMKDIR)/revdeps.sh,$(_deps_revdeps.sh))
-$(shell chmod a+rx $(PROJMKDIR)/revdeps.sh)
-endif
-
-ifeq ($(shell test -e $(PROJMKDIR)/rmdups.sh || echo f),f)
-$(file >$(PROJMKDIR)/rmdups.sh,$(_deps_rmdups.sh))
-$(shell chmod a+rx $(PROJMKDIR)/rmdups.sh)
-endif
-
-ifeq ($(shell test -e $(PROJMKDIR)/stripslash.sh || echo f),f)
-$(file >$(PROJMKDIR)/stripslash.sh,$(_deps_stripslash.sh))
-$(shell chmod a+rx $(PROJMKDIR)/stripslash.sh)
-endif
-
-ifeq ($(shell test -e $(PROJMKDIR)/dep_unpack.sh || echo f),f)
-$(file >$(PROJMKDIR)/dep_unpack.sh,$(_dep_unpack.sh))
-$(shell chmod a+rx $(PROJMKDIR)/dep_unpack.sh)
-endif
 
 #ifneq ($(MAKECMDGOALS),deps_show)
 #DEPS := $(shell $(MAKE) deps_show)
@@ -197,7 +86,7 @@ endef
 # TEMPLATES FOR deps_show TARGET
 ######################################################################
 define _deps_gen_show
-	$(if $(shell test -e $(DEPSDIR)/src/$(1)/proj.mk && echo t),\
+	$(if $(shell test -e $(DEPSDIR)/src/$(1)/.proj.mk && echo t),\
 	  @$(MAKE) --no-print-directory -C $(DEPSDIR)/src/$(1) deps_show)
 
 endef
@@ -280,7 +169,7 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	fi
 	@$(call projmk_infomsg,GENERATE info file for $(1))
 	echo USE__$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
-	if [ -e $(DEPSDIR)/src/$(1)/proj.mk ]; then \
+	if [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
 		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo; \
 	elif [ -e $(PROJMKDIR)/$(1).proj.mk.info ]; then \
 		echo include $(PROJMKDIR)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
@@ -296,22 +185,6 @@ $(DEPSDIR)/src/.$(1).get: $(DEPSDIR)/.deps_dirs
 	$(if $(deps_get_$(1)),$(call _deps_gen_get,$(1),$(deps_get_$(1))))
 	touch $$@
 
-endef
-
-######################################################################
-# TEMPLATES FOR TARGETS
-######################################################################
-define _deps_gen_targ
-ifeq ($(TARGET_TYPE),prog)
-$(1):: $(if $(wordlist 2,$(words $(TARGET)),$(TARGET)),$(1).$(O)) $(OBJS)
-	$(CC) -o $$@ $$^ $$(LDFLAGS)
-else ifeq ($(TARGET_TYPE),liba)
-$(1):: $(OBJS)
-	$(AR) rvs $$@ $$^
-else ifeq ($(TARGET_TYPE),libso)
-$(1):: $(OBJS)
-	$(CC) -shared -o $$@ $$^
-endif
 endef
 
 
@@ -372,8 +245,6 @@ deps_show:
 	@echo $(DEPS)
 	$(foreach dep,$(DEPS),$(call _deps_gen_show,$(dep)))
 
-$(foreach targ,$(TARGET),$(eval $(call _deps_gen_targ,$(targ))))
-
 clean-all:: clean clean-tests clean-deps
 	rm -f $(TARGET)
 
@@ -388,7 +259,3 @@ clean::
 
 tests:
 	$(MAKE) -C tests
-
-%.o: %.c
-	$(CC) -c -o $@ $(CFLAGS) $<
-
