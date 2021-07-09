@@ -3,7 +3,7 @@ OBJS := $(patsubst %,%.$(O),$(SOURCES))
 
 define projmk_prog_gen_targ
 ifeq ($(TARGET_TYPE),prog)
-$(1):: $(if $(wordlist 2,$(words $(TARGET)),$(TARGET)),$(1).$(O)) $(OBJS)
+$(1):: $(if $(wordlist 2,$(words $(TARGET)),$(TARGET)),$(1).c.$(O)) $(OBJS)
 	$(CC) -o $$@ $$^ $$(LDFLAGS)
 endif
 endef
