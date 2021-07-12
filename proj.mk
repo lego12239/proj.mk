@@ -42,7 +42,8 @@ ifdef DEPSDIR
 DEPS_ME_IS_DEP := 1
 endif
 
-DEPSDIR ?= $(shell pwd)/deps/
+PROJDIR ?= $(shell pwd)
+DEPSDIR ?= $(PROJDIR)/deps/
 PROJMKDIR := $(shell pwd)/.proj.mk
 DEPS_VARS_RMDUPS += CFLAGS LDFLAGS
 DEPS_VARS_EXPORT += CFLAGS LDFLAGS
@@ -54,6 +55,7 @@ ifdef DEBUG
 	CFLAGS += -g3 -ggdb -DDEBUG
 endif
 
+export PROJDIR
 export DEPSDIR
 export PROJMKDIR
 export DEBUG
