@@ -147,7 +147,7 @@ define _deps_gen_build_configure
 endef
 
 define _deps_gen_build_default
-	$$(MAKE) -C $(DEPSDIR)/src/$(1)
+	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1)
 endef
 
 define _deps_gen_build_detect
@@ -165,7 +165,7 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	if [ -e $(DEPSDIR)/src/$(1) ]; then \
 		$(if $(deps_build_$(1)),$(call _deps_gen_build,$(1),\
 		  $(deps_build_$(1))),$(call _deps_gen_build_detect,$(1))); \
-		$$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install; \
+		$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install; \
 	fi
 	@$(call projmk_infomsg,GENERATE info file for $(1))
 	echo USE__$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
@@ -206,9 +206,10 @@ $(foreach dep,$(DEPS_BACKUP),$(eval $(call _deps_gen_incl,$(dep))))
 DEPS := $(DEPS_BACKUP)
 endif
 
-# Generate export statements for all USE_* variables and variables
-# specified in DEPS_VARS_EXPORT variable.
+# Generate export statements for all USE_* variables, deps_ttype_* variables
+# and variables specified in DEPS_VARS_EXPORT variable.
 $(foreach var,$(filter USE_%,$(.VARIABLES)),$(eval export $(var)))
+$(foreach var,$(filter deps_ttype_%,$(.VARIABLES)),$(eval export $(var)))
 $(foreach var,$(DEPS_VARS_EXPORT),$(eval export $(var)))
 
 # Add USE_* variables to CFLAGS
