@@ -7,9 +7,11 @@ $(error PROJECT variable is't defined)
 endif
 
 # Set target and target type
-TARGET ?= $(PROJECT)
-
+# TARGET_TYPE or TARGET must be set.
+# We can detect TARGET from TARGET_TYPE and PROJECT;
+# and we can detect TARGET_TYPE from TARGET.
 ifeq ($(TARGET_TYPE),)
+TARGET ?= $(PROJECT)
 ifeq ($(suffix $(TARGET)),.a)
 TARGET_TYPE := liba
 else ifeq ($(suffix $(TARGET)),.so)
@@ -26,8 +28,17 @@ else ifeq ($(TARGET_TYPE),libso)
 else
 $(error unknown TARGET_TYPE: $(TARGET_TYPE))
 endif
-
 $(info TARGET_TYPE is $(TARGET_TYPE))
+
+ifeq ($(TARGET),)
+ifeq ($(TARGET_TYPE),liba)
+TARGET := $(PROJECT).a
+else ifeq ($(TARGET_TYPE),libso)
+TARGET := $(PROJECT).so
+else ifeq ($(TARGET_TYPE),prog)
+TARGET := $(PROJECT)
+endif
+endif
 
 CCYAN := $(shell /bin/echo -e '\033[36;01m')
 CRST := $(shell /bin/echo -e '\033[00m')
