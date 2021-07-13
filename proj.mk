@@ -116,6 +116,8 @@ define _deps_gen_get_git
 	elif [ -e $(DEPSDIR)/src/$(1) ]; then \
 		rm -rf $(DEPSDIR)/src/$(1); \
 		git clone $(word 2,$(2)) $(DEPSDIR)/src/$(1); \
+	else \
+		git clone $(word 2,$(2)) $(DEPSDIR)/src/$(1); \
 	fi
 	$(if $(word 3,$(2)),cd $(DEPSDIR)/src/$(1) && git checkout $(word 3,$(2)))
 endef
