@@ -126,9 +126,9 @@ define _deps_gen_get_git
 		cd $(DEPSDIR)/src/$(1) && git pull; \
 	elif [ -e $(DEPSDIR)/src/$(1) ]; then \
 		rm -rf $(DEPSDIR)/src/$(1); \
-		git clone $(word 2,$(2)) $(DEPSDIR)/src/$(1); \
+		git clone $(word 2,$(2)) $(DEPSDIR)/src/$(1) || exit 1; \
 	else \
-		git clone $(word 2,$(2)) $(DEPSDIR)/src/$(1); \
+		git clone $(word 2,$(2)) $(DEPSDIR)/src/$(1) || exit 1; \
 	fi
 	$(if $(word 3,$(2)),cd $(DEPSDIR)/src/$(1) && git checkout $(word 3,$(2)))
 endef
@@ -157,7 +157,7 @@ define _deps_gen_build
 endef
 
 define _deps_gen_build_configure
-	cd $(DEPSDIR)/src/$(1) && ./configure --prefix=/ ; \
+	cd $(DEPSDIR)/src/$(1) && ./configure --prefix=/ || exit 1; \
 	$$(MAKE) -C $(DEPSDIR)/src/$(1)
 endef
 
@@ -179,13 +179,13 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	@$(call projmk_infomsg,BUILD $(1))
 	if [ -e $(DEPSDIR)/src/$(1) ]; then \
 		$(if $(deps_build_$(1)),$(call _deps_gen_build,$(1),\
-		  $(deps_build_$(1))),$(call _deps_gen_build_detect,$(1))); \
-		$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install; \
+		  $(deps_build_$(1))),$(call _deps_gen_build_detect,$(1))) || exit 1; \
+		$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1; \
 	fi
 	@$(call projmk_infomsg,GENERATE info file for $(1))
 	echo USE__$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
 	if [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
-		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo; \
+		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo || exit 1; \
 	elif [ -e $(PROJMKDIR)/$(1).proj.mk.info ]; then \
 		echo include $(PROJMKDIR)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif pkg-config --exists $(1); then \
