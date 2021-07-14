@@ -141,7 +141,7 @@ define _deps_gen_get_wget
 endef
 
 define _deps_gen_get_custom
-	$(2)
+	$(wordlist 2,$(words $(2)),$(2))
 endef
 
 define _deps_gen_get
