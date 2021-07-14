@@ -8,7 +8,11 @@ echo "$(CBLUE)$(1)$(CRST)"
 endef
 
 define fail
-{ echo "$(CRED)FAIL$(CRST)"; exit 1; }
+{ echo "$(CRED)FAIL$(CRST): " '$(1)'; exit 1; }
+endef
+
+define t
+	@$(1) || $(call fail,$(1))
 endef
 
 .PHONY: tests t001 t001.0 t001.1 t001.2 t001.3\
@@ -30,10 +34,11 @@ t016 t016.0 t016.1 t016.2\
 t017 t017.0 t017.1 t017.2\
 t018 t018.0 t018.1 t018.2\
 t019 t019.0\
-t020 t020.0
+t020 t020.0\
+t021 t021.0\
 
 tests: t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 t011 t012 t013 t014\
-t015 t016 t017 t018 t019 t020
+t015 t016 t017 t018 t019 t020 t021
 	@echo "$(CGREEN)OK$(CRST)"
 
 t001: t001.0 t001.1 t001.2 t001.3
@@ -744,4 +749,15 @@ t020.0:
 	@ldd t020/prog | grep libmya\.so >/dev/null 2>&1 || $(call fail)
 	@[ ! -e t020/libmy/libmy.a ] || $(call fail)
 	@[ ! -e t020/libmya/libmya.so ] || $(call fail)
+
+t021: t021.0
+
+t021.0:
+	@$(call infom,21.0. test USE_DEP macro)
+	@$(call t,$(MAKE) --no-print-directory -C t021 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t021/libmy clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t021/libmya clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t021)
+	@$(call t,[ -e t021/prog ])
+	@$(call t,[ "`t021/prog`" == "libmya is used" ])
 

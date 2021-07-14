@@ -183,7 +183,7 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 		$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1; \
 	fi
 	@$(call projmk_infomsg,GENERATE info file for $(1))
-	echo USE__$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
+	echo USE_$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
 	if [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
 		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo || exit 1; \
 	elif [ -e $(PROJMKDIR)/$(1).proj.mk.info ]; then \
