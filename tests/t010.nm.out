@@ -1,0 +1,3 @@
+libmy.a:src1.c.o:0000000000000000 T somefunc1
+libmy.a:src2.c.o:0000000000000000 T somefunc2
+libmy.a:src3.c.o:0000000000000000 T somefunc3
