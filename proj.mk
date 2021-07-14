@@ -55,7 +55,7 @@ endif
 
 PROJDIR ?= $(shell pwd)
 DEPSDIR ?= $(PROJDIR)/deps/
-PROJMKDIR := $(shell pwd)/.proj.mk
+PROJMKDIR ?= $(shell A=`pwd`; while [ ! -d $$A/.proj.mk ] ; do A=$${A%/*}; done; echo $$A/.proj.mk)
 DEPS_VARS_RMDUPS += CFLAGS LDFLAGS
 DEPS_VARS_EXPORT += CFLAGS LDFLAGS
 
@@ -68,7 +68,6 @@ endif
 
 export PROJDIR
 export DEPSDIR
-export PROJMKDIR
 export DEBUG
 
 .PHONY: deps deps_ deps_show deps_genfullinfo
