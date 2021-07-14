@@ -1,0 +1,3 @@
+DEPS := libmya
+deps_get_libmya ?= git $(PROJDIR)/libmya
+LDFLAGS += -lmy

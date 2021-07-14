@@ -629,7 +629,15 @@ t014.3:
 
 t015: t015.0 t015.1 t015.2 t015.3
 
-t015.0:
+t015/libmy/.git:
+	@$(call infom,15-prepare)
+	cd t015/libmy && tar -xf git.tar
+
+t015/libmya/.git:
+	@$(call infom,15-prepare)
+	cd t015/libmya && tar -xf git.tar
+
+t015.0: t015/libmy/.git t015/libmya/.git
 	@$(call infom,15.0. test deps obtain with git)
 	@$(MAKE) --no-print-directory -C t015 clean-all || $(call fail)
 	@$(MAKE) --no-print-directory -C t015 || $(call fail)
@@ -640,7 +648,7 @@ t015.0:
 	@[ -e t015/deps/src/libmy/.git ] || $(call fail)
 	@[ -e t015/deps/src/libmya/.git ] || $(call fail)
 
-t015.1:
+t015.1: t015/libmy/.git t015/libmya/.git
 	@$(call infom,15.1. test project clean(deps obtained with git))
 	@$(MAKE) --no-print-directory -C t015 clean || $(call fail)
 	@[ -e t015/prog ] || $(call fail)
@@ -651,7 +659,7 @@ t015.1:
 	@[ -e t015/libmy ] || $(call fail)
 	@[ -e t015/libmya ] || $(call fail)
 
-t015.2:
+t015.2: t015/libmy/.git t015/libmya/.git
 	@$(call infom,15.2. test project clean-all(deps obtained with git))
 	@$(MAKE) --no-print-directory -C t015 || $(call fail)
 	@$(MAKE) --no-print-directory -C t015 clean-all || $(call fail)
@@ -663,7 +671,7 @@ t015.2:
 	@[ -e t015/libmy ] || $(call fail)
 	@[ -e t015/libmya ] || $(call fail)
 
-t015.3:
+t015.3: t015/libmy/.git t015/libmya/.git
 	@$(call infom,15.3. test project clean-deps(deps obtained with git))
 	@$(MAKE) --no-print-directory -C t015 || $(call fail)
 	@$(MAKE) --no-print-directory -C t015 clean-deps || $(call fail)
