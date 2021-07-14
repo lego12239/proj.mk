@@ -54,6 +54,7 @@ DEPS_ME_IS_DEP := 1
 endif
 
 PROJDIR ?= $(shell pwd)
+# Change also clean-deps-all rule
 DEPSDIR ?= $(PROJDIR)/deps/
 PROJMKDIR ?= $(shell A=`pwd`; while [ ! -d $$A/.proj.mk ] ; do A=$${A%/*}; done; echo $$A/.proj.mk)
 DEPS_VARS_RMDUPS += CFLAGS LDFLAGS
@@ -72,7 +73,7 @@ export DEBUG
 
 .PHONY: deps deps_ deps_show deps_genfullinfo
 .PHONY: build build-pre build-post
-.PHONY: clean clean-all clean-deps clean-tests tests
+.PHONY: clean clean-all clean-deps clean-deps-all clean-tests tests
 
 #ifneq ($(MAKECMDGOALS),deps_show)
 #DEPS := $(shell $(MAKE) deps_show)
@@ -201,6 +202,14 @@ $(DEPSDIR)/src/.$(1).get: $(DEPSDIR)/.deps_dirs
 
 endef
 
+######################################################################
+# TEMPLATES FOR CLEANDEPS TARGETS
+######################################################################
+define _deps_gen_cleandep
+	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $(MAKE) -C $(DEPSDIR)/src/$(1) clean-all
+	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $(MAKE) -C $(DEPSDIR)/src/$(1) clean-deps
+endef
+
 
 build: build-pre $(TARGET) build-post
 
@@ -260,11 +269,15 @@ deps_show:
 	@echo $(DEPS)
 	$(foreach dep,$(DEPS),$(call _deps_gen_show,$(dep)))
 
-clean-all:: clean clean-tests clean-deps
+# Use $(shell pwd)/deps instead of $(DEPSDIR) because we
+# don't want to delete $(PROJDIR)/deps on 'make clean-deps'
+# called on a parent project when current project is a dependency.
+clean-all:: clean clean-tests
+	rm -rf $(shell pwd)/deps
 	rm -f $(TARGET)
 
 clean-deps::
-	rm -rf $(DEPSDIR)/
+	$(foreach dep,$(DEPS),$(call _deps_gen_cleandep,$(dep)))
 
 clean-tests::
 	$(MAKE) -C tests clean || true
