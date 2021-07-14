@@ -232,6 +232,7 @@ endif
 # Generate export statements for all USE_* variables, deps_ttype_* variables
 # and variables specified in DEPS_VARS_EXPORT variable.
 $(foreach var,$(filter USE_%,$(.VARIABLES)),$(eval export $(var)))
+$(foreach var,$(filter deps_get_%,$(.VARIABLES)),$(eval export $(var)))
 $(foreach var,$(filter deps_ttype_%,$(.VARIABLES)),$(eval export $(var)))
 $(foreach var,$(DEPS_VARS_EXPORT),$(eval export $(var)))
 
