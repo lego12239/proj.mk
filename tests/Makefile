@@ -29,10 +29,11 @@ t015 t015.0 t015.1 t015.2\
 t016 t016.0 t016.1 t016.2\
 t017 t017.0 t017.1 t017.2\
 t018 t018.0 t018.1 t018.2\
-t019 t019.0
+t019 t019.0\
+t020 t020.0
 
 tests: t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 t011 t012 t013 t014\
-t015 t016 t017 t018 t019
+t015 t016 t017 t018 t019 t020
 	@echo "$(CGREEN)OK$(CRST)"
 
 t001: t001.0 t001.1 t001.2 t001.3
@@ -730,4 +731,17 @@ t019.0:
 	@$(MAKE) --no-print-directory -C t019 clean-deps || $(call fail)
 	@diff -rq t019/libmy t019/deps/src/libmy >/dev/null 2>&1 || $(call fail)
 	@diff -rq t019/libmya t019/deps/src/libmya >/dev/null 2>&1 || $(call fail)
+
+t020: t020.0
+
+t020.0:
+	@$(call infom,20.0. test deps_get_* override)
+	@$(MAKE) --no-print-directory -C t020 clean-all || $(call fail)
+	@$(MAKE) --no-print-directory -C t020/libmy clean-all || $(call fail)
+	@TARGET_TYPE=libso $(MAKE) --no-print-directory -C t020/libmya clean-all || $(call fail)
+	@$(MAKE) --no-print-directory -C t020 || $(call fail)
+	@[ -e t020/prog ] || $(call fail)
+	@ldd t020/prog | grep libmya\.so >/dev/null 2>&1 || $(call fail)
+	@[ ! -e t020/libmy/libmy.a ] || $(call fail)
+	@[ ! -e t020/libmya/libmya.so ] || $(call fail)
 
