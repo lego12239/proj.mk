@@ -685,10 +685,6 @@ t016.0:
 	@$(MAKE) --no-print-directory -C t016 || $(call fail)
 	@[ -e t016/prog ] || $(call fail)
 	@ldd t016/prog | grep libmya\.so >/dev/null 2>&1 || $(call fail)
-	@[ ! -e t016/libmy/libmy.a ] || $(call fail)
-	@[ ! -e t016/libmya/libmya.so ] || $(call fail)
-	@[ -e t016/deps/src/libmy/.git ] || $(call fail)
-	@[ -e t016/deps/src/libmya/.git ] || $(call fail)
 
 t016.1:
 	@$(call infom,16.1. test project clean(deps without TARGET))
@@ -696,8 +692,6 @@ t016.1:
 	@[ -e t016/prog ] || $(call fail)
 	@[ -e t016/deps ] || $(call fail)
 	@[ ! -e t016/main.c.o ] || $(call fail)
-	@[ ! -e t016/libmy/libmy.a ] || $(call fail)
-	@[ ! -e t016/libmya/libmya.so ] || $(call fail)
 	@[ -e t016/libmy ] || $(call fail)
 	@[ -e t016/libmya ] || $(call fail)
 
@@ -708,8 +702,6 @@ t016.2:
 	@[ ! -e t016/prog ] || $(call fail)
 	@[ ! -e t016/deps ] || $(call fail)
 	@[ ! -e t016/main.c.o ] || $(call fail)
-	@[ ! -e t016/libmy/libmy.a ] || $(call fail)
-	@[ ! -e t016/libmya/libmya.so ] || $(call fail)
 	@[ -e t016/libmy ] || $(call fail)
 	@[ -e t016/libmya ] || $(call fail)
 
@@ -720,8 +712,6 @@ t016.3:
 	@[ -e t016/prog ] || $(call fail)
 	@[ ! -e t016/deps ] || $(call fail)
 	@[ -e t016/main.c.o ] || $(call fail)
-	@[ ! -e t016/libmy/libmy.a ] || $(call fail)
-	@[ ! -e t016/libmya/libmya.so ] || $(call fail)
 	@[ -e t016/libmy ] || $(call fail)
 	@[ -e t016/libmya ] || $(call fail)
 
@@ -735,10 +725,6 @@ t017.0:
 	@$(MAKE) --no-print-directory -C t017 || $(call fail)
 	@[ -e t017/prog ] || $(call fail)
 	@ldd t017/prog | grep libmya\.so >/dev/null 2>&1 || $(call fail)
-	@[ ! -e t017/libmy/libmy.a ] || $(call fail)
-	@[ ! -e t017/libmya/libmya.so ] || $(call fail)
-	@[ -e t017/deps/src/libmy/.git ] || $(call fail)
-	@[ -e t017/deps/src/libmya/.git ] || $(call fail)
 
 t017.1:
 	@$(call infom,17.1. test project clean(deps without .proj.mk dir))
@@ -746,8 +732,6 @@ t017.1:
 	@[ -e t017/prog ] || $(call fail)
 	@[ -e t017/deps ] || $(call fail)
 	@[ ! -e t017/main.c.o ] || $(call fail)
-	@[ ! -e t017/libmy/libmy.a ] || $(call fail)
-	@[ ! -e t017/libmya/libmya.so ] || $(call fail)
 	@[ -e t017/libmy ] || $(call fail)
 	@[ -e t017/libmya ] || $(call fail)
 
@@ -758,8 +742,6 @@ t017.2:
 	@[ ! -e t017/prog ] || $(call fail)
 	@[ ! -e t017/deps ] || $(call fail)
 	@[ ! -e t017/main.c.o ] || $(call fail)
-	@[ ! -e t017/libmy/libmy.a ] || $(call fail)
-	@[ ! -e t017/libmya/libmya.so ] || $(call fail)
 	@[ -e t017/libmy ] || $(call fail)
 	@[ -e t017/libmya ] || $(call fail)
 
@@ -770,8 +752,6 @@ t017.3:
 	@[ -e t017/prog ] || $(call fail)
 	@[ ! -e t017/deps ] || $(call fail)
 	@[ -e t017/main.c.o ] || $(call fail)
-	@[ ! -e t017/libmy/libmy.a ] || $(call fail)
-	@[ ! -e t017/libmya/libmya.so ] || $(call fail)
 	@[ -e t017/libmy ] || $(call fail)
 	@[ -e t017/libmya ] || $(call fail)
 
