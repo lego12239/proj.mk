@@ -779,6 +779,10 @@ t023: t023.0
 
 t023.0:
 	@$(call infom,23.0. test project with non-proj.mk dep(with proj.mk.info in db.priv))
+	@$(call t,rm -rf t023/.proj.mk)
+	@$(call t,mkdir -p t023/.proj.mk/db.priv)
+	@$(call t,cd .. && tar -c --exclude=".git" --exclude="tests" . | ( cd tests/t023/.proj.mk; tar -x))
+	@$(call t,cp t023.libmya.proj.mk.info t023/.proj.mk/db.priv/libmya.proj.mk.info)
 	@$(call t,$(MAKE) --no-print-directory -C t023 clean-all)
 	@$(call t,$(MAKE) --no-print-directory -C t023/libmy clean-all)
 	@$(call t,rm -f t023/libmya/Makefile t023/libmya/*.o t023/libmya/*.so)
