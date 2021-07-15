@@ -209,8 +209,6 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo || exit 1; \
 	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk.info ]; then \
 		echo include $(DEPSDIR)/src/$(1)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
-	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk.info ]; then \
-		echo include $(PROJMKDIR)/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk.info ]; then \
 		echo include $(PROJMKDIR)/db/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif pkg-config --exists $(1); then \
