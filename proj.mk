@@ -188,6 +188,8 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	echo USE_$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
 	if [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
 		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo || exit 1; \
+	elif [ -e $(DEPSDIR)/src/$(1).proj.mk.info ]; then \
+		echo include $(DEPSDIR)/src/$(1)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/$(1).proj.mk.info ]; then \
 		echo include $(PROJMKDIR)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif pkg-config --exists $(1); then \
