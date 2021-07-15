@@ -1,0 +1,19 @@
+#!/bin/sh
+
+rm Makefile
+echo "PREFIX := /usr/local" >> Makefile
+
+is_opts=1
+while [ $is_opts ]; do
+case ${1%%=*} in
+--prefix)
+	echo "PREFIX := ${1#*=}" >> Makefile
+	shift
+	;;
+*)
+	is_opts=
+	;;
+esac
+done
+
+cat Makefile.in >> Makefile

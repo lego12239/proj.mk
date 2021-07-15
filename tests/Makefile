@@ -773,3 +773,14 @@ t022.0:
 	@$(call t,[ -e t022/prog ])
 	@$(call t,ldd t022/prog | grep libmya\.so >/dev/null 2>&1)
 
+t023: t023.0
+
+t023.0:
+	@$(call infom,23.0. test project with non-proj.mk dep(with proj.mk.info in db.priv))
+	@$(call t,$(MAKE) --no-print-directory -C t023 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t023/libmy clean-all)
+	@$(call t,rm -f t023/libmya/Makefile t023/libmya/*.o t023/libmya/*.so)
+	@$(call t,$(MAKE) --no-print-directory -C t023)
+	@$(call t,[ -e t023/prog ])
+	@$(call t,ldd t023/prog | grep libmya\.so >/dev/null 2>&1)
+
