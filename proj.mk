@@ -168,7 +168,11 @@ define _deps_gen_build_default
 endef
 
 define _deps_gen_build_detect
-	if [ -e $(DEPSDIR)/src/$(1)/configure ]; then\
+	if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk ]; then\
+		cd $(DEPSDIR)/src/$(1) || exit 1;\
+		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk || exit 1;\
+		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1;\
+	elif [ -e $(DEPSDIR)/src/$(1)/configure ]; then\
 	  $(call _deps_gen_build_configure,$(1)) || exit 1;\
 	else\
 	  $(call _deps_gen_build_default,$(1)) || exit 1; \
