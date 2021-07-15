@@ -36,9 +36,10 @@ t018 t018.0 t018.1 t018.2\
 t019 t019.0\
 t020 t020.0\
 t021 t021.0\
+t022 t022.0\
 
 tests: t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 t011 t012 t013 t014\
-t015 t016 t017 t018 t019 t020 t021
+t015 t016 t017 t018 t019 t020 t021 t022
 	@echo "$(CGREEN)OK$(CRST)"
 
 t001: t001.0 t001.1 t001.2 t001.3
@@ -760,4 +761,16 @@ t021.0:
 	@$(call t,$(MAKE) --no-print-directory -C t021)
 	@$(call t,[ -e t021/prog ])
 	@$(call t,[ "`t021/prog`" == "libmy with libmyalibmya is used" ])
+
+t022: t022.0
+
+t022.0:
+	@$(call infom,22.0. test project with non-proj.mk dep)
+	@$(call t,$(MAKE) --no-print-directory -C t022 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t022/libmy clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t022/libmya clean-all)
+	@$(call t,rm -f t022/libmya/Makefile)
+	@$(call t,$(MAKE) --no-print-directory -C t022)
+	@$(call t,[ -e t022/prog ])
+	@$(call t,ldd t022/prog | grep libmya\.so >/dev/null 2>&1)
 
