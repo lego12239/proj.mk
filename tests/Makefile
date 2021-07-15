@@ -38,10 +38,11 @@ t020 t020.0\
 t021 t021.0\
 t022 t022.0\
 t023 t023.0\
-t024 t024.0
+t024 t024.0\
+t025 t025.0
 
 tests: t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 t011 t012 t013 t014\
-t015 t016 t017 t018 t019 t020 t021 t022 t023 t024
+t015 t016 t017 t018 t019 t020 t021 t022 t023 t024 t025
 	@echo "$(CGREEN)OK$(CRST)"
 
 t001: t001.0 t001.1 t001.2 t001.3
@@ -800,4 +801,19 @@ t024.0:
 	@$(call t,$(MAKE) --no-print-directory -C t024)
 	@$(call t,[ -e t024/prog ])
 	@$(call t,ldd t024/prog | grep libmya\.so >/dev/null 2>&1)
+
+t025: t025.0
+
+t025.0:
+	@$(call infom,25.0. test project with non-proj.mk dep(with proj.mk in db.priv))
+	@$(call t,rm -rf t025/.proj.mk)
+	@$(call t,mkdir -p t025/.proj.mk/db.priv)
+	@$(call t,cd .. && tar -c --exclude=".git" --exclude="tests" . | ( cd tests/t025/.proj.mk; tar -x))
+	@$(call t,cp t025.libmya.proj.mk t025/.proj.mk/db.priv/libmya.proj.mk)
+	@$(call t,cp t025.libmya.proj.mk.info t025/.proj.mk/db.priv/libmya.proj.mk.info)
+	@$(call t,$(MAKE) --no-print-directory -C t025 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t025/libmy clean-all)
+	@$(call t,rm -f t025/libmya/Makefile t025/libmya/*.o t025/libmya/*.so)
+	@$(call t,$(MAKE) --no-print-directory -C t025)
+	@$(call t,[ -e t025/prog ])
 
