@@ -158,11 +158,13 @@ endef
 
 define _deps_gen_build_configure
 	cd $(DEPSDIR)/src/$(1) && ./configure --prefix=/ || exit 1; \
-	$$(MAKE) -C $(DEPSDIR)/src/$(1)
+	$$(MAKE) -C $(DEPSDIR)/src/$(1) || exit 1; \
+	$$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) install
 endef
 
 define _deps_gen_build_default
-	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1)
+	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) || exit 1; \
+	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install
 endef
 
 define _deps_gen_build_detect
@@ -182,7 +184,6 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	if [ -e $(DEPSDIR)/src/$(1) ]; then \
 		$(if $(deps_build_$(1)),$(call _deps_gen_build,$(1),\
 		  $(deps_build_$(1))),$(call _deps_gen_build_detect,$(1))) || exit 1; \
-		$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1; \
 	fi
 	@$(call projmk_infomsg,GENERATE info file for $(1))
 	echo USE_$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
