@@ -759,5 +759,5 @@ t021.0:
 	@$(call t,$(MAKE) --no-print-directory -C t021/libmya clean-all)
 	@$(call t,$(MAKE) --no-print-directory -C t021)
 	@$(call t,[ -e t021/prog ])
-	@$(call t,[ "`t021/prog`" == "libmya is used" ])
+	@$(call t,[ "`t021/prog`" == "libmy with libmyalibmya is used" ])
 
