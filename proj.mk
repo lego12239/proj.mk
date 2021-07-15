@@ -166,9 +166,11 @@ define _deps_gen_build_default
 endef
 
 define _deps_gen_build_detect
-	$(if $(shell test -e $(DEPSDIR)/src/$(1)/configure && echo t),\
-	  $(call _deps_gen_build_configure,$(1)),\
-	  $(call _deps_gen_build_default,$(1)))
+	if [ -e $(DEPSDIR)/src/$(1)/configure ]; then\
+	  $(call _deps_gen_build_configure,$(1)) || exit 1;\
+	else\
+	  $(call _deps_gen_build_default,$(1)) || exit 1; \
+	fi
 endef
 
 ######################################################################
