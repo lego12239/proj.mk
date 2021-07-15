@@ -37,9 +37,11 @@ t019 t019.0\
 t020 t020.0\
 t021 t021.0\
 t022 t022.0\
+t023 t023.0\
+t024 t024.0
 
 tests: t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 t011 t012 t013 t014\
-t015 t016 t017 t018 t019 t020 t021 t022
+t015 t016 t017 t018 t019 t020 t021 t022 t023 t024
 	@echo "$(CGREEN)OK$(CRST)"
 
 t001: t001.0 t001.1 t001.2 t001.3
@@ -783,4 +785,15 @@ t023.0:
 	@$(call t,$(MAKE) --no-print-directory -C t023)
 	@$(call t,[ -e t023/prog ])
 	@$(call t,ldd t023/prog | grep libmya\.so >/dev/null 2>&1)
+
+t024: t024.0
+
+t024.0:
+	@$(call infom,24.0. test deps_build_*)
+	@$(call t,$(MAKE) --no-print-directory -C t024 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t024/libmy clean-all)
+	@$(call t,rm -f t024/libmya/Makefile t024/libmya/*.o t024/libmya/*.so)
+	@$(call t,$(MAKE) --no-print-directory -C t024)
+	@$(call t,[ -e t024/prog ])
+	@$(call t,ldd t024/prog | grep libmya\.so >/dev/null 2>&1)
 
