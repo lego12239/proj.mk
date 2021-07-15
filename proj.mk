@@ -172,6 +172,10 @@ define _deps_gen_build_detect
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk || exit 1;\
 		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1;\
+	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk ]; then\
+		cd $(DEPSDIR)/src/$(1) || exit 1;\
+		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk || exit 1;\
+		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1;\
 	elif [ -e $(DEPSDIR)/src/$(1)/configure ]; then\
 	  $(call _deps_gen_build_configure,$(1)) || exit 1;\
 	else\
@@ -191,7 +195,11 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	fi
 	@$(call projmk_infomsg,GENERATE info file for $(1))
 	echo USE_$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
-	if [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
+	if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info ]; then \
+		echo include $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
+	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk.info ]; then \
+		echo include $(PROJMKDIR)/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
+	elif [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
 		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo || exit 1; \
 	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk.info ]; then \
 		echo include $(DEPSDIR)/src/$(1)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
