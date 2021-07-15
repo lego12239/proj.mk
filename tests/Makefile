@@ -765,7 +765,7 @@ t021.0:
 t022: t022.0
 
 t022.0:
-	@$(call infom,22.0. test project with non-proj.mk dep)
+	@$(call infom,22.0. test project with non-proj.mk dep(with proj.mk.info))
 	@$(call t,$(MAKE) --no-print-directory -C t022 clean-all)
 	@$(call t,$(MAKE) --no-print-directory -C t022/libmy clean-all)
 	@$(call t,$(MAKE) --no-print-directory -C t022/libmya clean-all)
