@@ -39,10 +39,12 @@ t021 t021.0\
 t022 t022.0\
 t023 t023.0\
 t024 t024.0\
-t025 t025.0
+t025 t025.0\
+t026 t026.0\
+t027 t027.0
 
 tests: t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 t011 t012 t013 t014\
-t015 t016 t017 t018 t019 t020 t021 t022 t023 t024 t025
+t015 t016 t017 t018 t019 t020 t021 t022 t023 t024 t025 t026 t027
 	@echo "$(CGREEN)OK$(CRST)"
 
 t001: t001.0 t001.1 t001.2 t001.3
@@ -816,4 +818,39 @@ t025.0:
 	@$(call t,rm -f t025/libmya/Makefile t025/libmya/*.o t025/libmya/*.so)
 	@$(call t,$(MAKE) --no-print-directory -C t025)
 	@$(call t,[ -e t025/prog ])
+
+t026: t026.0
+
+t026.0:
+	@$(call infom,26.0. test project with non-proj.mk dep(with proj.mk in db.priv))
+	@$(call t,rm -rf t026/.proj.mk)
+	@$(call t,mkdir -p t026/.proj.mk/db.priv)
+	@$(call t,cd .. && tar -c --exclude=".git" --exclude="tests" . | ( cd tests/t026/.proj.mk; tar -x))
+	@$(call t,rm -rf t026/libmy/.proj.mk)
+	@$(call t,mkdir -p t026/libmy/.proj.mk/db.priv)
+	@$(call t,cd .. && tar -c --exclude=".git" --exclude="tests" . | ( cd tests/t026/libmy/.proj.mk; tar -x))
+	@$(call t,cp t026.libmya.proj.mk t026/.proj.mk/db.priv/libmya.proj.mk)
+	@$(call t,cp t026.libmya.proj.mk.info t026/.proj.mk/db.priv/libmya.proj.mk.info)
+	@$(call t,cp t026.libmya.proj.mk.2 t026/libmy/.proj.mk/db.priv/libmya.proj.mk)
+	@$(call t,cp t026.libmya.proj.mk.info.2 t026/libmy/.proj.mk/db.priv/libmya.proj.mk.info)
+	@$(call t,$(MAKE) --no-print-directory -C t026 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t026/libmy clean-all)
+	@$(call t,rm -f t026/libmya/Makefile t026/libmya/*.o t026/libmya/*.so)
+	@$(call t,$(MAKE) --no-print-directory -C t026)
+	@$(call t,[ -e t026/prog ])
+
+t027: t027.0
+
+t027.0:
+	@$(call infom,27.0. test project with non-proj.mk dep(with proj.mk in db.priv))
+	@$(call t,rm -rf t027/libmy/.proj.mk)
+	@$(call t,mkdir -p t027/libmy/.proj.mk/db.priv)
+	@$(call t,cd .. && tar -c --exclude=".git" --exclude="tests" . | ( cd tests/t027/libmy/.proj.mk; tar -x))
+	@$(call t,cp t027.libmya.proj.mk t027/libmy/.proj.mk/db.priv/libmya.proj.mk)
+	@$(call t,cp t027.libmya.proj.mk.info t027/libmy/.proj.mk/db.priv/libmya.proj.mk.info)
+	@$(call t,$(MAKE) --no-print-directory -C t027 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t027/libmy clean-all)
+	@$(call t,rm -f t027/libmya/Makefile t027/libmya/*.o t027/libmya/*.so)
+	@$(call t,$(MAKE) --no-print-directory -C t027)
+	@$(call t,[ -e t027/prog ])
 
