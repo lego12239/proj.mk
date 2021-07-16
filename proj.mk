@@ -71,7 +71,7 @@ export PROJDIR
 export DEPSDIR
 export DEBUG
 
-.PHONY: deps deps_ deps_show deps_genfullinfo
+.PHONY: deps deps_ deps_show projmk_gendepsinfo
 .PHONY: build build-pre build-post
 .PHONY: clean clean-all clean-deps clean-deps-all clean-tests tests
 
@@ -216,8 +216,6 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 		echo include $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk.info ]; then \
 		echo include $(PROJMKDIR)/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
-	elif [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
-		$$(MAKE) -C $(DEPSDIR)/src/$(1) deps_genfullinfo || exit 1; \
 	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk.info ]; then \
 		echo include $(DEPSDIR)/src/$(1)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk.info ]; then \
@@ -225,8 +223,18 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	elif pkg-config --exists $(1); then \
 		echo CFLAGS += `pkg-config --cflags $(1)` >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 		echo LDFLAGS += `pkg-config --libs $(1)` >> $(DEPSDIR)/src/$(1).proj.mk.info; \
-	else \
-		echo >> $(DEPSDIR)/src/$(1).proj.mk.info; \
+	fi
+	if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk ]; then\
+		cd $(DEPSDIR)/src/$(1) || exit 1;\
+		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk projmk_gendepsinfo || exit 1; \
+	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk ]; then\
+		cd $(DEPSDIR)/src/$(1) || exit 1;\
+		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk projmk_gendepsinfo || exit 1; \
+	elif [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
+		$$(MAKE) -C $(DEPSDIR)/src/$(1) projmk_gendepsinfo || exit 1; \
+	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk ]; then\
+		cd $(DEPSDIR)/src/$(1) || exit 1;\
+		$$(MAKE) -f $(PROJMKDIR)/db/$(1).proj.mk projmk_gendepsinfo || exit 1; \
 	fi
 
 $(DEPSDIR)/src/.$(1).get: $(DEPSDIR)/.deps_dirs
@@ -283,10 +291,7 @@ qqq:
 	echo $(DEPS)
 	echo $(LDFLAGS)
 
-deps_genfullinfo:
-	if [ -e $(PROJECT).proj.mk.info ]; then \
-		echo include $(DEPSDIR)/src/$(PROJECT)/$(PROJECT).proj.mk.info >> $(DEPSDIR)/src/$(PROJECT).proj.mk.info; \
-	fi
+projmk_gendepsinfo:
 	$(foreach dep,$(DEPS),echo include $(DEPSDIR)/src/$(dep).proj.mk.info >> $(DEPSDIR)/src/$(PROJECT).proj.mk.info)
 
 deps:
