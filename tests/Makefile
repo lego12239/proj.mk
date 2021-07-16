@@ -41,10 +41,14 @@ t023 t023.0\
 t024 t024.0\
 t025 t025.0\
 t026 t026.0\
-t027 t027.0
+t027 t027.0\
+t028 t028.0\
+t031 t031.0\
+t032 t032.0
 
 tests: t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 t011 t012 t013 t014\
-t015 t016 t017 t018 t019 t020 t021 t022 t023 t024 t025 t026 t027
+t015 t016 t017 t018 t019 t020 t021 t022 t023 t024 t025 t026 t027 t028 t031\
+t032
 	@echo "$(CGREEN)OK$(CRST)"
 
 t001: t001.0 t001.1 t001.2 t001.3
@@ -853,4 +857,49 @@ t027.0:
 	@$(call t,rm -f t027/libmya/Makefile t027/libmya/*.o t027/libmya/*.so)
 	@$(call t,$(MAKE) --no-print-directory -C t027)
 	@$(call t,[ -e t027/prog ])
+
+t028: t028.0
+
+t028.0:
+	@$(call infom,28.0. test project with non-proj.mk dep(with proj.mk in db.priv))
+	@$(call t,rm -rf t028/.proj.mk)
+	@$(call t,mkdir -p t028/.proj.mk/db.priv)
+	@$(call t,cd .. && tar -c --exclude=".git" --exclude="tests" . | ( cd tests/t028/.proj.mk; tar -x))
+	@$(call t,cp t028.libmy.proj.mk t028/.proj.mk/db.priv/libmy.proj.mk)
+	@$(call t,cp t028.libmy.proj.mk.info t028/.proj.mk/db.priv/libmy.proj.mk.info)
+	@$(call t,cp t028.libmya.proj.mk t028/.proj.mk/db.priv/libmya.proj.mk)
+	@$(call t,cp t028.libmya.proj.mk.info t028/.proj.mk/db.priv/libmya.proj.mk.info)
+	@$(call t,$(MAKE) --no-print-directory -C t028 clean-all)
+	@$(call t,rm -f t028/libmy/*.o t028/libmy/*.a)
+	@$(call t,rm -f t028/libmya/Makefile t028/libmya/*.o t028/libmya/*.so)
+	@$(call t,$(MAKE) --no-print-directory -C t028)
+	@$(call t,[ -e t028/prog ])
+
+t031: t031.0
+
+t031.0:
+	@$(call infom,31.0. test project with dep_patch_*)
+	@$(call t,$(MAKE) --no-print-directory -C t031 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t031/libmy clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t031/libmya clean-all)
+	@$(call t,diff t031.libmy.src1.c t031/libmy/src1.c)
+	@$(call t,diff t031.libmya.src1.c t031/libmya/src1.c)
+	@$(call t,$(MAKE) --no-print-directory -C t031)
+	@$(call t,[ -e t031/prog ])
+	@$(call t,diff t031.libmy.src1.c t031/libmy/src1.c)
+	@$(call t,diff t031.libmya.src1.c t031/libmya/src1.c)
+
+t032: t032.0
+
+t032.0:
+	@$(call infom,32.0. test project with dep_patch_*(more than one patch))
+	@$(call t,$(MAKE) --no-print-directory -C t032 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t032/libmy clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t032/libmya clean-all)
+	@$(call t,diff t032.libmy.src1.c t032/libmy/src1.c)
+	@$(call t,diff t032.libmya.src1.c t032/libmya/src1.c)
+	@$(call t,$(MAKE) --no-print-directory -C t032)
+	@$(call t,[ -e t032/prog ])
+	@$(call t,diff t032.libmy.src1.c t032/libmy/src1.c)
+	@$(call t,diff t032.libmya.src1.c t032/libmya/src1.c)
 

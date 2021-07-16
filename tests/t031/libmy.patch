@@ -1,0 +1,11 @@
+diff -ur libmy/src1.c libmy.new/src1.c
+--- libmy/src1.c	2021-07-16 16:15:59.204550665 +0300
++++ libmy.new/src1.c	2021-07-16 16:15:45.767550959 +0300
+@@ -1 +1,7 @@
+ #include "my.h"
++
++void
++somefunc1(void)
++{
++	mya_somefunc1();
++}

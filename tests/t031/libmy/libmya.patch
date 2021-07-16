@@ -1,0 +1,8 @@
+diff -ur libmya/src1.c libmya.new/src1.c
+--- libmya/src1.c	2021-07-16 16:17:11.772549079 +0300
++++ libmya.new/src1.c	2021-07-16 16:17:01.702549299 +0300
+@@ -0,0 +1,4 @@
++void
++mya_somefunc1(void)
++{
++}
