@@ -150,6 +150,17 @@ define _deps_gen_get
 endef
 
 ######################################################################
+# TEMPLATES FOR PATCH STAGE
+######################################################################
+define _projmk_gen_deppatch
+	if [ -e $(DEPSDIR)/src/$(1) ]; then \
+		for P in $(2); do \
+			patch -d $(DEPSDIR)/src/$(1) -p1 <$$$$P || exit 1; \
+		done \
+	fi
+endef
+
+######################################################################
 # TEMPLATES FOR BUILD STAGE
 ######################################################################
 define _deps_gen_build
@@ -221,6 +232,7 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 $(DEPSDIR)/src/.$(1).get: $(DEPSDIR)/.deps_dirs
 	@$(call projmk_infomsg,OBTAIN $(1))
 	$(if $(deps_get_$(1)),$(call _deps_gen_get,$(1),$(deps_get_$(1))))
+	$(if $(deps_patch_$(1)),$(call _projmk_gen_deppatch,$(1),$(deps_patch_$(1))))
 	touch $$@
 
 endef
@@ -256,6 +268,7 @@ endif
 # and variables specified in DEPS_VARS_EXPORT variable.
 $(foreach var,$(filter USE_%,$(.VARIABLES)),$(eval export $(var)))
 $(foreach var,$(filter deps_get_%,$(.VARIABLES)),$(eval export $(var)))
+$(foreach var,$(filter deps_patch_%,$(.VARIABLES)),$(eval export $(var)))
 $(foreach var,$(filter deps_ttype_%,$(.VARIABLES)),$(eval export $(var)))
 $(foreach var,$(DEPS_VARS_EXPORT),$(eval export $(var)))
 
