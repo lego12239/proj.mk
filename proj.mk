@@ -28,7 +28,7 @@ else ifeq ($(TARGET_TYPE),libso)
 else
 $(error unknown TARGET_TYPE: $(TARGET_TYPE))
 endif
-$(info TARGET_TYPE is $(TARGET_TYPE))
+$(info $(PROJECT): TARGET_TYPE is $(TARGET_TYPE))
 
 ifeq ($(TARGET),)
 ifeq ($(TARGET_TYPE),liba)
@@ -205,14 +205,14 @@ endef
 ######################################################################
 define _deps_gen_targets
 $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
-	@$(call projmk_infomsg,BUILD $(1))
-	if [ -e $(DEPSDIR)/src/$(1) ]; then \
+	@$(call projmk_infomsg,$(PROJECT): BUILD $(1))
+	@if [ -e $(DEPSDIR)/src/$(1) ]; then \
 		$(if $(deps_build_$(1)),$(call _deps_gen_build,$(1),\
 		  $(deps_build_$(1))),$(call _deps_gen_build_detect,$(1))) || exit 1; \
 	fi
-	@$(call projmk_infomsg,GENERATE info file for $(1))
-	echo USE_$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
-	if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info ]; then \
+	@$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1))
+	@echo USE_$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
+	@if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info ]; then \
 		echo include $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk.info ]; then \
 		echo include $(PROJMKDIR)/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
@@ -224,7 +224,7 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 		echo CFLAGS += `pkg-config --cflags $(1)` >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 		echo LDFLAGS += `pkg-config --libs $(1)` >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	fi
-	if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk ]; then\
+	@if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk ]; then\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk projmk_gendepsinfo || exit 1; \
 	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk ]; then\
@@ -236,11 +236,12 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db/$(1).proj.mk projmk_gendepsinfo || exit 1; \
 	fi
+	@$(call projmk_infomsg,$(PROJECT): DONE with $(1))
 
 $(DEPSDIR)/src/.$(1).get: $(DEPSDIR)/.deps_dirs
-	@$(call projmk_infomsg,OBTAIN $(1))
-	$(if $(deps_get_$(1)),$(call _deps_gen_get,$(1),$(deps_get_$(1))))
-	$(if $(deps_patch_$(1)),$(call _projmk_gen_deppatch,$(1),$(deps_patch_$(1))))
+	@$(call projmk_infomsg,$(PROJECT): OBTAIN $(1) with $(word 1,$(deps_get_$(1))))
+	@$(if $(deps_get_$(1)),$(call _deps_gen_get,$(1),$(deps_get_$(1))))
+	@$(if $(deps_patch_$(1)),$(call _projmk_gen_deppatch,$(1),$(deps_patch_$(1))))
 	touch $$@
 
 endef
@@ -257,7 +258,7 @@ endef
 build: build-pre $(TARGET) build-post
 
 build-pre::
-	$(if $(DEPS_ME_IS_DEP),,@$(call projmk_infomsg,BUILD $(PROJECT)))
+	@$(call projmk_infomsg,$(PROJECT): BUILD me)
 
 build-post::
 
@@ -292,7 +293,7 @@ qqq:
 	echo $(LDFLAGS)
 
 projmk_gendepsinfo:
-	$(foreach dep,$(DEPS),echo include $(DEPSDIR)/src/$(dep).proj.mk.info >> $(DEPSDIR)/src/$(PROJECT).proj.mk.info)
+	@$(foreach dep,$(DEPS),echo include $(DEPSDIR)/src/$(dep).proj.mk.info >> $(DEPSDIR)/src/$(PROJECT).proj.mk.info)
 
 deps:
 	rm -f $(DEPSDIR)/src/*.proj.mk.info
