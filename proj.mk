@@ -173,9 +173,14 @@ define _deps_gen_build_configure
 	$$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) install
 endef
 
+define _deps_gen_build_projmk
+	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) -f $(1).proj.mk || exit 1; \
+	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) -f $(1).proj.mk DESTDIR=$(DEPSDIR) PREFIX=/ install
+endef
+
 define _deps_gen_build_default
-	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) || exit 1; \
-	$(if $(deps_ttype_$(1)),TARGET_TYPE=$(deps_ttype_$(1))) $$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install
+	$$(MAKE) -C $(DEPSDIR)/src/$(1) || exit 1; \
+	$$(MAKE) -C $(DEPSDIR)/src/$(1) DESTDIR=$(DEPSDIR) PREFIX=/ install
 endef
 
 define _deps_gen_build_detect
@@ -187,8 +192,8 @@ define _deps_gen_build_detect
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1;\
-	elif [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then\
-		$(call _deps_gen_build_default,$(1)) || exit 1; \
+	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk ]; then\
+		$(call _deps_gen_build_projmk,$(1)) || exit 1; \
 	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk ]; then\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db/$(1).proj.mk || exit 1;\
@@ -230,8 +235,8 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk ]; then\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk projmk_gendepsinfo || exit 1; \
-	elif [ -e $(DEPSDIR)/src/$(1)/.proj.mk ]; then \
-		$$(MAKE) -C $(DEPSDIR)/src/$(1) projmk_gendepsinfo || exit 1; \
+	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk ]; then \
+		$$(MAKE) -C $(DEPSDIR)/src/$(1) -f $(1).proj.mk projmk_gendepsinfo || exit 1; \
 	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk ]; then\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db/$(1).proj.mk projmk_gendepsinfo || exit 1; \
