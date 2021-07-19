@@ -1,2 +1,1 @@
-Broken file
-Just to test git clone work
+libmy.proj.mk

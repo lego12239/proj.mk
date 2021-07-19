@@ -1,8 +1,1 @@
-DEPS := libmya
-deps_get_libmya ?= ln $(PROJDIR)/libmya
-deps_build_libmya ?= gcc -c -o src1.o -fPIC src1.c; gcc -c -o src2.o -fPIC src2.c;\
-  gcc -c -o src3.o -fPIC src3.c;\
-  gcc -shared -o libmya.so src1.o src2.o src3.o;\
-  install -m 0444 libmya.so $(DEPSDIR)/lib;\
-  install -m 0444 mya.h $(DEPSDIR)/include
 LDFLAGS += -lmy

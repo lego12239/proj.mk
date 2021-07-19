@@ -1,2 +1,1 @@
-Broken file
-Just to test that git-clone works
+libmya.proj.mk
