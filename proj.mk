@@ -153,6 +153,7 @@ endef
 # TEMPLATES FOR PATCH STAGE
 ######################################################################
 define _projmk_gen_deppatch
+	@$(call projmk_infomsg,$(PROJECT): PATCH $(1))
 	if [ -e $(DEPSDIR)/src/$(1) ]; then \
 		for P in $(2); do \
 			patch -d $(DEPSDIR)/src/$(1) -p1 <$$$$P || exit 1; \
