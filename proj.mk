@@ -1,6 +1,7 @@
 # Licensed under 2-clause BSD license. See LICENSE file.
 # Copyright 2021 Oleg Nemanov <lego12239@yandex.ru>
 # https://github.com/lego12239/proj.mk
+# Version 1.0.0
 
 ifeq ($(PROJECT),)
 $(error PROJECT variable is't defined)
