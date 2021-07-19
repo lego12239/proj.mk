@@ -226,26 +226,35 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	@$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1))
 	@echo USE_$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
 	@if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info ]; then \
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info)\
 		echo include $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk.info ]; then \
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJMKDIR)/db.priv/$(1).proj.mk.info)\
 		echo include $(PROJMKDIR)/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk.info ]; then \
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(DEPSDIR)/src/$(1)/$(1).proj.mk.info)\
 		echo include $(DEPSDIR)/src/$(1)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk.info ]; then \
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJMKDIR)/db/$(1).proj.mk.info)\
 		echo include $(PROJMKDIR)/db/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif pkg-config --exists $(1); then \
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using pkg-config)\
 		echo CFLAGS += `pkg-config --cflags $(1)` >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 		echo LDFLAGS += `pkg-config --libs $(1)` >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	fi
 	@if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk ]; then\
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk)\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk projmk_gendepsinfo || exit 1; \
 	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk ]; then\
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJMKDIR)/db.priv/$(1).proj.mk)\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk projmk_gendepsinfo || exit 1; \
 	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk ]; then \
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(1).proj.mk)\
 		$$(MAKE) -C $(DEPSDIR)/src/$(1) -f $(1).proj.mk projmk_gendepsinfo || exit 1; \
 	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk ]; then\
+		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJMKDIR)/db/$(1).proj.mk)\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db/$(1).proj.mk projmk_gendepsinfo || exit 1; \
 	fi
