@@ -1,0 +1,5 @@
+1. make html doc
+2. make makefile templates
+3. move build commands to bash script and call it from the recipe?
+4. split proj.mk to proj.mk and vars.proj.mk; vars.proj.mk will be used
+   to allow proj.mk variables are used in deps definition(like PROJDIR, DEPSDIR,...)
