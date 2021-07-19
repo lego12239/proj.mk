@@ -146,6 +146,7 @@ define _deps_gen_get_custom
 endef
 
 define _deps_gen_get
+	@$(call projmk_infomsg,$(PROJECT): OBTAIN $(1) using $(word 1,$(2)))
 	$(call _deps_gen_get_$(word 1,$(2)),$(1),$(2))
 endef
 
@@ -245,7 +246,6 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	@$(call projmk_infomsg,$(PROJECT): DONE with $(1))
 
 $(DEPSDIR)/src/.$(1).get: $(DEPSDIR)/.deps_dirs
-	@$(call projmk_infomsg,$(PROJECT): OBTAIN $(1) with $(word 1,$(deps_get_$(1))))
 	@$(if $(deps_get_$(1)),$(call _deps_gen_get,$(1),$(deps_get_$(1))))
 	@$(if $(deps_patch_$(1)),$(call _projmk_gen_deppatch,$(1),$(deps_patch_$(1))))
 	touch $$@
