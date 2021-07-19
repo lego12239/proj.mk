@@ -42,7 +42,7 @@ endif
 
 CCYAN := $(shell /bin/echo -e '\033[36;01m')
 CRST := $(shell /bin/echo -e '\033[00m')
-projmk_infomsg = echo "$(CCYAN)[$(1)]$(CRST)"
+projmk_infomsg = echo "$(CCYAN)[$(1)]$(CRST)";
 
 DESTDIR ?= /
 PREFIX ?= /usr/local
@@ -166,6 +166,7 @@ endef
 # TEMPLATES FOR BUILD STAGE
 ######################################################################
 define _deps_gen_build
+	$(call projmk_infomsg,$(PROJECT): BUILD $(1) using deps_build_$(1))\
 	cd $(DEPSDIR)/src/$(1) && { $(2); }
 endef
 
@@ -187,22 +188,28 @@ endef
 
 define _deps_gen_build_detect
 	if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk ]; then\
+		$(call projmk_infomsg,$(PROJECT): BUILD $(1) using $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk)\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk || exit 1;\
 		$$(MAKE) -f $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1;\
 	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk ]; then\
+		$(call projmk_infomsg,$(PROJECT): BUILD $(1) using $(PROJMKDIR)/db.priv/$(1).proj.mk)\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db.priv/$(1).proj.mk DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1;\
 	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk ]; then\
+		$(call projmk_infomsg,$(PROJECT): BUILD $(1) using $(DEPSDIR)/src/$(1)/$(1).proj.mk)\
 		$(call _deps_gen_build_projmk,$(1)) || exit 1; \
 	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk ]; then\
+		$(call projmk_infomsg,$(PROJECT): BUILD $(1) using $(PROJMKDIR)/db/$(1).proj.mk)\
 		cd $(DEPSDIR)/src/$(1) || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db/$(1).proj.mk || exit 1;\
 		$$(MAKE) -f $(PROJMKDIR)/db/$(1).proj.mk DESTDIR=$(DEPSDIR) PREFIX=/ install || exit 1;\
 	elif [ -e $(DEPSDIR)/src/$(1)/configure ]; then\
+		$(call projmk_infomsg,$(PROJECT): BUILD $(1) using configure&make)\
 		$(call _deps_gen_build_configure,$(1)) || exit 1;\
 	else\
+		$(call projmk_infomsg,$(PROJECT): BUILD $(1) using make)\
 		$(call _deps_gen_build_default,$(1)) || exit 1; \
 	fi
 endef
@@ -212,7 +219,6 @@ endef
 ######################################################################
 define _deps_gen_targets
 $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
-	@$(call projmk_infomsg,$(PROJECT): BUILD $(1))
 	@if [ -e $(DEPSDIR)/src/$(1) ]; then \
 		$(if $(deps_build_$(1)),$(call _deps_gen_build,$(1),\
 		  $(deps_build_$(1))),$(call _deps_gen_build_detect,$(1))) || exit 1; \
