@@ -47,7 +47,7 @@ projmk_infomsg = echo "$(CCYAN)[$(1)]$(CRST)"
 DESTDIR ?= /
 PREFIX ?= /usr/local
 D := $(DESTDIR)/$(PREFIX)
-O ?= o
+O ?= o-$(TARGET_TYPE)
 
 ifdef DEPSDIR
 DEPS_ME_IS_DEP := 1
