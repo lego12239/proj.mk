@@ -43,12 +43,13 @@ t025 t025.0\
 t026 t026.0\
 t027 t027.0\
 t028 t028.0\
+t029 t029.0\
 t031 t031.0\
 t032 t032.0
 
 tests: t001 t002 t003 t004 t005 t006 t007 t008 t009 t010 t011 t012 t013 t014\
-t015 t016 t017 t018 t019 t020 t021 t022 t023 t024 t025 t026 t027 t028 t031\
-t032
+t015 t016 t017 t018 t019 t020 t021 t022 t023 t024 t025 t026 t027 t028 t029\
+t031 t032
 	@echo "$(CGREEN)OK$(CRST)"
 
 t001: t001.0 t001.1 t001.2 t001.3
@@ -874,6 +875,16 @@ t028.0:
 	@$(call t,rm -f t028/libmya/Makefile t028/libmya/*.o t028/libmya/*.so)
 	@$(call t,$(MAKE) --no-print-directory -C t028)
 	@$(call t,[ -e t028/prog ])
+
+t029: t029.0
+
+t029.0:
+	@$(call infom,29.0. test project with non-proj.mk dep(adapted for proj.mk))
+	@$(call t,$(MAKE) --no-print-directory -C t029 clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t029/libmy clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t029/libmya clean-all)
+	@$(call t,$(MAKE) --no-print-directory -C t029)
+	@$(call t,[ -e t029/prog ])
 
 t031: t031.0
 
