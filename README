@@ -17,25 +17,25 @@ Goals
 How to use for a program
 ========================
 
-If you have a small project without dependencies, just create a simple
-Makefile:
-```
-PROJECT := mybinary
-TARGET := mybinary
-SOURCES := mybinary.c another.c
+If you have a small project without dependencies, just run
+PROJMKDIR/bootstrap.sh from your project directory(where
+PROJMKDIR is a directory where proj.mk project files are resided - i.e.
+a directory inside which you cloned proj.mk repo):
 
-include .proj.mk/c-proj.mk
-```
+PROJMKDIR/bootstrap.sh prog-c PROGNAME
 
-Copy proj.mk in .proj.mk directory. After this execute
-make command to build a project. TARGET variable can be
-removed - in this case TARGET will be equal to PROJECT:
-```
-PROJECT := mybinary
-SOURCES := mybinary.c another.c
+bootstrap.sh:
+- create .proj.mk directory
+- copy proj.mk files excluding git internal files and tests
+- copy proj.mk file template as PROGNAME.proj.mk
+- set PROJECT variable to PROGNAME
+- create a symlink to proj.mk file with 'Makefile' name.
 
-include .proj.mk/c-proj.mk
-```
+To see all available templates run:
+
+ls -1 PROJMKDIR/tmpl/  | sed -e 's/\.proj\.mk$//'
+
+After this execute make command to build a project.
 
 If you want to build several binaries, then specify them in
 TARGET variable:
@@ -51,6 +51,9 @@ Source files specified in SOURCES will be used for all targets and
 object file TARGET_NAME.c.o will be add to every target. In the
 example above this mean that myprog1 have the next objects as
 prerequisites: myprog1.c.o src1.c.o src2.c.o src3.c.o.
+
+If you do not specify TARGET variable, then it value is equal to PROJECT
+value.
 
 If your project have dependencies, then they need to be specified:
 ```
@@ -392,3 +395,11 @@ DEPSDIR/src/.DEP.get         - dependency obtain flag for DEP dependency
                                (remove to reobtain a dependency)
 deps_                        - obtain and build dependencies
 deps_genfullinfo             -
+
+
+Conventions
+===========
+
+Variables that some dependencies want:
+
+USE__THREADS  - NO/PTHREAD - what thread implementation to use
