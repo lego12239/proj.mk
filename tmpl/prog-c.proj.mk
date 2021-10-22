@@ -1,4 +1,4 @@
-PROJECT := prog
+PROJECT := __MYPROJNAME__
 SOURCES := main.c another.c
 
 DEPS := libmy

@@ -1,4 +1,4 @@
-PROJECT := libmy
+PROJECT := __MYPROJNAME__
 TARGET_TYPE ?= liba
 SOURCES := src1.c src2.c src3.c
 
