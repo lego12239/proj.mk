@@ -288,7 +288,7 @@ build-post::
 $(foreach dep,$(DEPS),$(eval $(call _deps_gen_targets,$(dep))))
 
 # Generate include statements for dependencies
-ifeq ($(or $(if $(filter deps_,$(MAKECMDGOALS)),yes),$(if $(MAKECMDGOALS),,yes)),yes)
+ifeq ($(or $(if $(filter deps_ tests,$(MAKECMDGOALS)),yes),$(if $(MAKECMDGOALS),,yes)),yes)
 DEPS_BACKUP := $(DEPS)
 #$(shell echo $(DEPS) >&2)
 $(foreach dep,$(DEPS_BACKUP),$(eval $(call _deps_gen_incl,$(dep))))
