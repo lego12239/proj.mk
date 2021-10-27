@@ -33,7 +33,7 @@ bootstrap.sh:
 
 To see all available templates run:
 
-ls -1 PROJMKDIR/tmpl/  | sed -e 's/\.proj\.mk$//'
+PROJMKDIR/bootstrap.sh -h
 
 After this execute make command to build a project.
 
