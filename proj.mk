@@ -351,4 +351,5 @@ clean::
 	rm -f *~ *.$(O)
 
 tests:
-	$(MAKE) -C tests
+	@$(call projmk_infomsg,$(PROJECT): RUN TESTS)
+	@$(MAKE) --no-print-directory -C tests
