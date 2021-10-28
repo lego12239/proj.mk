@@ -13,6 +13,11 @@ struct test {
 	char *title;
 };
 
+void
+init(void)
+{
+}
+
 int
 test0_0(void)
 {
@@ -34,6 +39,8 @@ int
 main(int argc, char **argv)
 {
 	int i, cnt = 0, ret, total = 0;
+
+	init();
 
 	for(i = 0; tests[i].test; i++)
 		total++;
