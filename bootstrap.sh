@@ -21,6 +21,11 @@ mkdir .proj.mk || exit 1
 
 mkdir .proj.mk/db.priv
 
+if [ ! -d tests ]; then
+	mkdir tests
+	cp -f $PROJMKDIR/tests_skel/* tests/
+fi
+
 if [ "$1" ]; then
 	if [ ! -e "$PROJMKDIR/tmpl/${1}.proj.mk" ]; then
 		echo "template '$1' isn't found"
