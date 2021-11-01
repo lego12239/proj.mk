@@ -8,7 +8,7 @@ tests: $(TESTS)
 	done
 
 clean:
-	rm -f $(TESTS)
+	rm -f $(TESTS) *.o
 
 t001: t001.c ../MY.c
 	gcc -o $@ $< $(LDFLAGS)
