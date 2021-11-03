@@ -45,6 +45,6 @@ main(int argc, char **argv)
 			cnt++;
 	}
 
-	printf("TOTAL %d/%d\n", cnt, total);
+	printf("%s:TOTAL %d/%d\n", argv[0], cnt, total);
 	return cnt != total;
 }
