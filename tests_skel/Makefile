@@ -3,7 +3,7 @@
 TESTS := t001
 
 # none or rtld_next
-MEMALCHK ?= rtld_next
+MEMALCHK ?= none
 ifeq ($(MEMALCHK),rtld_next)
 LDFLAGS += -ldl
 endif
