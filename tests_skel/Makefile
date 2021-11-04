@@ -1,7 +1,7 @@
 .PHONY: tests
 .PRECIOUS: %.o
 
-TESTS := t001
+TESTS := $(patsubst %.c,%,$(shell ls t[0-9]*.c))
 
 # none or rtld_next
 MEMALCHK ?= none
