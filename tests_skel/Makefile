@@ -18,7 +18,7 @@ tests: $(TESTS)
 clean:
 	rm -f $(TESTS) *.o
 
-t%: t%.o $(MEMALCHK).o svsnprintf.o ../mjson.c
+t%: t%.o $(MEMALCHK).o svsnprintf.o ../MY.c
 	@gcc $(CFLAGS) -o $@ $< $(MEMALCHK).o svsnprintf.o $(LDFLAGS)
 
 %.o: %.c
