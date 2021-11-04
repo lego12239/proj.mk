@@ -1,4 +1,5 @@
 .PHONY: tests
+.PRECIOUS: %.o
 
 TESTS := t001
 
