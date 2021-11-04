@@ -2,6 +2,13 @@
 
 TESTS := t001
 
+# none or rtld_next
+MEMALCHK ?= rtld_next
+ifeq ($(MEMALCHK),rtld_next)
+LDFLAGS += -ldl
+endif
+MEMALCHK := memalchk.$(MEMALCHK)
+
 tests: $(TESTS)
 	@for i in $^; do \
 		./$$i || exit 1; \
@@ -10,6 +17,8 @@ tests: $(TESTS)
 clean:
 	rm -f $(TESTS) *.o
 
-t001: t001.c ../MY.c
-	gcc -o $@ $< $(LDFLAGS)
+t%: t%.o $(MEMALCHK).o svsnprintf.o ../mjson.c
+	@gcc $(CFLAGS) -o $@ $< $(MEMALCHK).o svsnprintf.o $(LDFLAGS)
 
+%.o: %.c
+	@gcc $(CFLAGS) -c -o $@ $<

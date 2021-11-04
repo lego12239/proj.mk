@@ -11,4 +11,14 @@ struct test {
 	char *title;
 };
 
+struct memchunk {
+	int state; /* 0 - unused, 1 - allocated, 2 - freed */
+	void *ptr;
+};
+
+void memalchk_init(void);
+void memalchk_save(void);
+void memalchk_check(void);
+void memalchk_show_stat(void);
+
 #endif /* __TESTS_H__ */
