@@ -10,6 +10,21 @@ init(void)
 {
 }
 
+void
+pretest(int idx)
+{
+}
+
+void
+posttest(int idx)
+{
+}
+
+void
+deinit(void)
+{
+}
+
 int
 test0_0(void)
 {
@@ -38,12 +53,16 @@ main(int argc, char **argv)
 		total++;
 
 	for(i = 0; tests[i].test; i++) {
+		pretest(i);
 		fprintf(stderr, "%s:%s... ", argv[0], tests[i].title);
 		ret = tests[i].test();
 		fprintf(stderr, "%s\n", ret ? "ok" : "fail");
+		posttest(i);
 		if (ret)
 			cnt++;
 	}
+
+	deinit();
 
 	printf("%s:TOTAL %d/%d\n", argv[0], cnt, total);
 	return cnt != total;
