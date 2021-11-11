@@ -3,3 +3,10 @@
 3. move build commands to bash script and call it from the recipe?
 4. split proj.mk to proj.mk and vars.proj.mk; vars.proj.mk will be used
    to allow proj.mk variables are used in deps definition(like PROJDIR, DEPSDIR,...)
+5. build a project with -g and then save debug info to a separate file:
+  objcopy --only-keep-debug "${tostripfile}" "${debugdir}/${debugfile}"
+strip --strip-debug --strip-unneeded "${tostripfile}"
+objcopy --add-gnu-debuglink="${debugdir}/${debugfile}" "${tostripfile}"
+6. Change USE_ to USEDEP_/USELIB_ for deps?
+7. Describe a difference between PROJDIR and PROJMKDIR for deps
+10. update README - add info about autotests framework.
