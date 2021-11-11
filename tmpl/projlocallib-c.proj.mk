@@ -1,6 +1,7 @@
 PROJECT := __MYPROJNAME__
 TARGET_TYPE ?= liba
-SOURCES := src1.c src2.c src3.c
+SOURCES := __MYPROJNAME__.c
+#SOURCES := src1.c src2.c src3.c
 
 #DEPS := libmya
 #deps_get_libmya ?= ln $(PROJDIR)/libmya
