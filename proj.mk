@@ -58,6 +58,7 @@ PROJDIR ?= $(shell pwd)
 # Change also clean-deps-all rule
 DEPSDIR ?= $(PROJDIR)/deps/
 PROJMKDIR ?= $(shell A=`pwd`; while [ ! -d $$A/.proj.mk ] ; do A=$${A%/*}; done; echo $$A/.proj.mk)
+PROJMKDIR_REL := $(shell A='$(PROJMKDIR)'; echo $${A\#$(PROJDIR)})
 DEPS_VARS_RMDUPS += CFLAGS LDFLAGS
 DEPS_VARS_EXPORT += CFLAGS LDFLAGS
 
@@ -228,16 +229,16 @@ $(DEPSDIR)/src/$(1).proj.mk.info: $(DEPSDIR)/src/.$(1).get
 	@echo USE_$(1) := 1 > $(DEPSDIR)/src/$(1).proj.mk.info
 	@if [ -e $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info ]; then \
 		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info)\
-		echo include $(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
+		echo 'include $$$$(PROJDIR)/.proj.mk/db.priv/$(1).proj.mk.info' >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/db.priv/$(1).proj.mk.info ]; then \
 		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJMKDIR)/db.priv/$(1).proj.mk.info)\
-		echo include $(PROJMKDIR)/db.priv/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
+		echo 'include $$$$(PROJDIR)/$(PROJMKDIR_REL)/db.priv/$(1).proj.mk.info' >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(DEPSDIR)/src/$(1)/$(1).proj.mk.info ]; then \
 		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(DEPSDIR)/src/$(1)/$(1).proj.mk.info)\
-		echo include $(DEPSDIR)/src/$(1)/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
+		echo 'include $$$$(DEPSDIR)/src/$(1)/$(1).proj.mk.info' >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif [ -e $(PROJMKDIR)/db/$(1).proj.mk.info ]; then \
 		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using $(PROJMKDIR)/db/$(1).proj.mk.info)\
-		echo include $(PROJMKDIR)/db/$(1).proj.mk.info >> $(DEPSDIR)/src/$(1).proj.mk.info; \
+		echo 'include $$$$(PROJDIR)/$(PROJMKDIR_REL)/db/$(1).proj.mk.info' >> $(DEPSDIR)/src/$(1).proj.mk.info; \
 	elif pkg-config --exists $(1); then \
 		$(call projmk_infomsg,$(PROJECT): GENERATE info for $(1) using pkg-config)\
 		echo CFLAGS += `pkg-config --cflags $(1)` >> $(DEPSDIR)/src/$(1).proj.mk.info; \
