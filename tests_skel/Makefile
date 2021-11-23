@@ -18,8 +18,11 @@ tests: $(TESTS)
 clean:
 	rm -f $(TESTS) *.o
 
-t%: t%.o $(MEMALCHK).o svsnprintf.o ../MY.c
-	@gcc $(CFLAGS) -o $@ $< $(MEMALCHK).o svsnprintf.o $(LDFLAGS)
+t%: t%.o $(MEMALCHK).o svsnprintf.o
+	gcc $(CFLAGS) -o $@ $< $(MEMALCHK).o svsnprintf.o $(LDFLAGS)
+
+t%.o: t%.c ../MY.c
+	gcc $(CFLAGS) -c -o $@ $<
 
 %.o: %.c
-	@gcc $(CFLAGS) -c -o $@ $<
+	gcc $(CFLAGS) -c -o $@ $<
