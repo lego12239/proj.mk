@@ -22,12 +22,14 @@ struct memchunk memchunks[CHUNKS_BASKETS_CNT][CHUNKS_CNT_IN_BASKET], memchunks_s
 unsigned int alloc_cnt;
 
 void *(*libc_malloc)(size_t);
+void *(*libc_realloc)(void*,size_t);
 void (*libc_free)(void*);
 
 void
 memalchk_init(void)
 {
 	libc_malloc = dlsym(RTLD_NEXT, "malloc");
+	libc_realloc = dlsym(RTLD_NEXT, "realloc");
 	libc_free = dlsym(RTLD_NEXT, "free");
 }
 
@@ -140,6 +142,19 @@ malloc(size_t size)
 
 	ptr = libc_malloc(size);
 	memalchk_log_alloc(ptr);
+	return ptr;
+}
+
+void*
+realloc(void *ptr, size_t size)
+{
+	void *prev_ptr = ptr;
+
+	ptr = libc_realloc(ptr, size);
+	if (prev_ptr != ptr) {
+		memalchk_log_free(prev_ptr);
+		memalchk_log_alloc(ptr);
+	}
 	return ptr;
 }
 
