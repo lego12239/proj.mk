@@ -236,8 +236,8 @@ Let's see what happen(simplified view) when we execute make command:
 2. If all DEPS are built(i.e. all DEPSDIR/src/DEP.proj.mk.info exist),
    then go to 10
 3. If all DEPS are obtained(i.e. all DEPSDIR/src/.DEP.get exist),
-   then go to 4
-4. Create deps/* directories, if not exist.
+   then go to 7
+4. Create DEPSDIR/* directories, if not exist.
 5. Obtain the next dependency from DEPS
 6. Create DEPSDIR/src/.DEP.get file
 7. Build and install the dependency, if DEPSDIR/src/DEP exist
