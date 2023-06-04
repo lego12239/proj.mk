@@ -3,6 +3,9 @@ TARGET_TYPE ?= liba
 SOURCES := __MYPROJNAME__.c
 #SOURCES := src1.c src2.c src3.c
 
+#CFLAGS := -Werror=pedantic -pedantic -std=c11
+#LDFLAGS := -L.
+
 #DEPS := libmya
 #deps_get_libmya ?= ln $(PROJDIR)/libmya
 
