@@ -17,7 +17,7 @@ case "$1" in
 esac
 
 mkdir .proj.mk || exit 1
-(cd $PROJMKDIR; tar -c --exclude=".git" --exclude="tests" --exclude="tmpl" --exclude="bootstrap.sh" --exclude="TODO" .) | (cd .proj.mk;tar -x)
+(cd $PROJMKDIR; tar -c --exclude=".git" --exclude="tests" --exclude="tests_skel" --exclude="tmpl" --exclude="bootstrap.sh" --exclude="TODO" .) | (cd .proj.mk;tar -x)
 
 cp -rf $PROJMKDIR/db .proj.mk/
 mkdir .proj.mk/db.priv
