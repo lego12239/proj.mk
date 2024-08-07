@@ -58,7 +58,7 @@ PROJDIR ?= $(shell pwd)
 # Change also clean-deps-all rule
 DEPSDIR ?= $(PROJDIR)/deps/
 PROJMKDIR ?= $(shell A=`pwd`; while [ ! -d $$A/.proj.mk ] ; do A=$${A%/*}; done; echo $$A/.proj.mk)
-PROJMKDIR_REL := $(shell A='$(PROJMKDIR)'; echo $${A\#$(PROJDIR)})
+PROJMKDIR_REL := $(shell $(PROJMKDIR)/rmpref.sh '$(PROJMKDIR)' '$(PROJDIR)')
 DEPS_VARS_RMDUPS += CFLAGS LDFLAGS
 DEPS_VARS_EXPORT += CFLAGS LDFLAGS
 
